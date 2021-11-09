@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, Keyboard, StyleSheet, Text,  TouchableWithoutFeedback,  View } from 'react-native';
+import AddTodo from './components/addTodo';
 import Header from './components/header';
 import SingleTodo from './components/singleTodo';
 
@@ -11,8 +12,22 @@ export default function App() {
     {text:'bathing', key:3}
   ])
 
+  const inputTextHandler = (todo) => {
+    if(todo.length>5){
+      setTodos((prevTodo) => {
+        return [
+          {text:todo, id:Math.random()},
+          ...prevTodo,
+        ]
+      })
+    }else{
+      Alert.alert('OOPS!', 'Todo musu over than 3 char', [
+        {text:'Understood', onPress:()=>console.log('alert closed')}
+      ])
+    }
+  }
+
   const deleteHandle = (id) => {
-    console.log(id)
     setTodos((prevTodo) => {
       return (
         prevTodo.filter(item => item.key != id)
@@ -21,11 +36,14 @@ export default function App() {
   }
 
   return (
-    <View style={styles.container}>
-      <View>
+    <TouchableWithoutFeedback onPress={() =>
+      Keyboard.dismiss()
+    }>
+      <View style={styles.container}>
+      <View style={styles.flex}>
         <Header/>
         <View>
-          <Text>inputs</Text>
+          <AddTodo inputTextHandler={inputTextHandler} />
         </View>
         <View style={styles.list}>
           <FlatList
@@ -42,6 +60,7 @@ export default function App() {
         </View>
       </View>
     </View>
+    </TouchableWithoutFeedback>
   );
 }
 
@@ -52,6 +71,10 @@ const styles = StyleSheet.create({
   },
   list:{
     margin:40,
+    flex:1,
   },
+  flex:{
+    flex:1,
+  }
   
 });
